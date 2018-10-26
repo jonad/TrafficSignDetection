@@ -6,7 +6,7 @@ import numpy as np
 class LeNet():
     def __init__(self,x, mu, sigma, bias_value,
                  conv1_params, conv2_params, p1_params,
-                 p2_params, fc1_params, fc2_params, fc3_params):
+                 p2_params, fc1_params, fc2_params, fc3_params, hold_prob):
         self.mu = mu
         self.sigma = sigma
         self.x = x
@@ -18,7 +18,7 @@ class LeNet():
         self.fc2_params = fc2_params
         self.fc3_params = fc3_params
         self.bias_value = bias_value
-        
+        self.hold_prob = hold_prob
         self.logits = self._build_neural_net()
         
         
@@ -63,12 +63,15 @@ class LeNet():
         output_activations_1 = self.fc1_params
         fully_connected_layer_1 = tf.nn.relu(fully_connected_layer(conv_flat, output_activations_1, self.mu, self.sigma, self.bias_value,
                                                                    name="fully_connected_1"))
+        # dropout
+        fully_connected_layer_1 = tf.nn.dropout(fully_connected_layer_1, keep_prob=self.hold_prob)
         
         # fully connected layer 2
         output_activations_2 = self.fc2_params
         fully_connected_layer_2 = tf.nn.relu(
             fully_connected_layer(fully_connected_layer_1, output_activations_2, self.mu, self.sigma, self.bias_value,
                                   name="fully_connected_2" ))
+        fully_connected_layer_2 = tf.nn.dropout(fully_connected_layer_2, keep_prob=self.hold_prob)
         
         # fully connected layer 3
         output_activations_3 = self.fc3_params
@@ -84,23 +87,6 @@ class LeNet():
         model_vars = tf.trainable_variables()
         slim.model_analyzer.analyze_vars(model_vars, print_info=True)
         
-        
-if __name__ == '__main__':
-    x = tf.placeholder(tf.float32, (None, 32, 32, 1))
-    mu, sigma, bias_value = 0, 0.1, 0.01
-    conv1_params = (5,5,1,6, 1, 'VALID')
-    conv2_params = (5, 5, 6, 16, 1, 'VALID')
-    p1_params = (2, 2, 'VALID')
-    p2_params = (2, 2, 'VALID')
-    fc1_params = 120
-    fc2_params = 84
-    fc3_params = 10
-    
-    lenet = LeNet(x, mu, sigma, bias_value, conv1_params,
-                  conv2_params, p1_params, p2_params, fc1_params,
-                  fc2_params, fc3_params)
-    
-    lenet.get_summary()
     
         
     

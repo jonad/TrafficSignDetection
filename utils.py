@@ -11,6 +11,7 @@ def init_weights(shape, mu, sigma):
     :return:
     '''
     init_weights_vals = tf.truncated_normal(shape=shape, mean=mu, stddev=sigma)
+    #cons = tf.keras.constraints.MaxNorm(constraint)
     return tf.Variable(init_weights_vals)
 
 def init_bias(shape, value):
@@ -36,7 +37,6 @@ def conv2d(input, filters, stride, padding):
 
 def max_pooling(input, ksize, stride, padding, name="max_pooling"):
     '''
-    
     :param input:
     :param size:
     :param stride:
@@ -50,7 +50,6 @@ def max_pooling(input, ksize, stride, padding, name="max_pooling"):
 
 def convolutional_layer(input, shape, mu, sigma, value, stride, padding, name="conv"):
     '''
-    
     :param input:
     :param shape:
     :param mu:
@@ -73,7 +72,6 @@ def convolutional_layer(input, shape, mu, sigma, value, stride, padding, name="c
 
 def fully_connected_layer(input, size, mu, sigma, value, name="fully_connected"):
     '''
-    
     :param input:
     :param size:
     :param mu:
@@ -91,22 +89,29 @@ def fully_connected_layer(input, size, mu, sigma, value, name="fully_connected")
         tf.summary.histogram("activations", activation)
         return activation
     
-def evaluate(X_data, y_data, evaluation_operation, batch_size):
-    num_examples = len(X_data)
-    x = tf.placeholder(tf.float32, shape=(None, 32, 32, 1))
-    y = tf.placeholder(tf.int32, shape=(None))
-    total_accuracy = 0
-    sess = tf.get_default_session()
-    for offset in range(0, num_examples, batch_size):
-        batch_x, batch_y = X_data[offset:offset + batch_size], y_data[offset:offset + batch_size]
-        accuracy = sess.run(evaluation_operation, feed_dict={x: batch_x, y: batch_y})
-        total_accuracy += (accuracy * len(batch_x))
-    return total_accuracy / num_examples
+# def evaluate(X_data, y_data, evaluation_operation, batch_size):
+#     num_examples = len(X_data)
+#     x = tf.placeholder(tf.float32, shape=(None, 32, 32, 1))
+#     y = tf.placeholder(tf.int32, shape=(None))
+#     total_accuracy = 0
+#     sess = tf.get_default_session()
+#     for offset in range(0, num_examples, batch_size):
+#         batch_x, batch_y = X_data[offset:offset + batch_size], y_data[offset:offset + batch_size]
+#         accuracy = sess.run(evaluation_operation, feed_dict={x: batch_x, y: batch_y})
+#         total_accuracy += (accuracy * len(batch_x))
+#     return total_accuracy / num_examples
 
 
 def normalize_and_grayscale(x):
-    
+    '''
+    Normalize and grayscale an input image
+    :param x:
+    :return:
+    '''
     return np.sum((x / 255.) * [0.299, 0.587, 0.114], axis=-1, keepdims=True)
+
+def normalize(images):
+    return images/255
     
     
     

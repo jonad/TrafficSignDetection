@@ -1,2 +1,2 @@
-model_checkpoint_path: "best_validation"
-all_model_checkpoint_paths: "best_validation"
+model_checkpoint_path: "lr_0.003"
+all_model_checkpoint_paths: "lr_0.003"
